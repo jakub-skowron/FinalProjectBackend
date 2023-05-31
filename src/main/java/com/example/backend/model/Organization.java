@@ -21,5 +21,6 @@ public class Organization {
 
     @NotBlank
     @Size(min = 2, max = 20)
+    @Column(unique = true)
     private String name;
 }
