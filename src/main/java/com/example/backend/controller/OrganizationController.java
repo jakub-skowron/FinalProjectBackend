@@ -5,6 +5,7 @@ import com.example.backend.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -17,6 +18,11 @@ public class OrganizationController {
     @GetMapping("")
     public Set<Organization> getAllOrganizations() {
         return organizationService.getOrganizations();
+    }
+
+    @GetMapping("/{id}")
+    public Optional<Organization> getOrganizationById(@PathVariable long id) {
+        return organizationService.getOrganizationById(id);
     }
 
     @PostMapping("")
