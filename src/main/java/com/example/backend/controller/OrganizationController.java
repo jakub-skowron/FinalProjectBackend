@@ -32,6 +32,6 @@ public class OrganizationController {
 
     @DeleteMapping("/{id}")
     public void removeOneOrganization(@PathVariable Long id) {
-        organizationService.removeOrganization(id);
+        organizationService.removeOrganizationById(id);
     }
 }
