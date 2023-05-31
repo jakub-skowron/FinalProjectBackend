@@ -20,7 +20,8 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
 class OrganizationServiceTest {
@@ -131,7 +132,6 @@ class OrganizationServiceTest {
         Organization organization = new Organization();
         organization.setId(id);
         organization.setName(existingName);
-
         when(organizationRepository.existsByName(existingName)).thenReturn(true);
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
@@ -146,7 +146,7 @@ class OrganizationServiceTest {
     }
 
     @Test
-    public void getOrganizationByIdWithInvalidIdShouldThrowException () {
+    public void getOrganizationByIdWithInvalidIdShouldThrowException() {
         long id = 1;
         when(organizationRepository.existsById(id)).thenReturn(false);
 
@@ -167,5 +167,27 @@ class OrganizationServiceTest {
 
         Optional<Organization> result = organizationService.getOrganizationById(id);
         assertEquals(organization, result.get());
+    }
+
+    @Test
+    public void deleteOrganizationByIdShouldPass() {
+        long id = 1;
+        String existingName = "Existing Name";
+        Organization organization = new Organization();
+        organization.setId(id);
+        organization.setName(existingName);
+        when(organizationRepository.existsById(id)).thenReturn(true);
+        organizationService.removeOrganizationById(id);
+        verify(organizationRepository).deleteById(id);
+    }
+
+    @Test
+    public void deleteOrganizationByIdWithInvalidIdShouldThrowException() {
+        long id = 1;
+        when(organizationRepository.existsById(id)).thenReturn(false);
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            organizationService.removeOrganizationById(id);
+        });
     }
 }
