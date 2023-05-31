@@ -18,7 +18,9 @@ public class OrganizationService {
     }
 
     public void addOrganization(Organization organization) {
-        organizationRepository.save(organization);
+        if(!organizationRepository.existsById(organization.getId()) && !organizationRepository.existsByName(organization.getName())){
+            organizationRepository.save(organization);
+        }else throw new IllegalArgumentException("The Organization name or id already exists!");
     }
 
     public void removeOrganization(Long id) {
