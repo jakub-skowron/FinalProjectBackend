@@ -14,6 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -135,5 +137,35 @@ class OrganizationServiceTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             organizationService.addOrganization(organization);
         });
+    }
+
+    @Test
+    public void getOrganizationsShouldPass() {
+        when(organizationRepository.findAll()).thenReturn(new ArrayList<>());
+        assertTrue(organizationService.getOrganizations().isEmpty());
+    }
+
+    @Test
+    public void getOrganizationByIdWithInvalidIdShouldThrowException () {
+        long id = 1;
+        when(organizationRepository.existsById(id)).thenReturn(false);
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            organizationService.getOrganizationById(id);
+        });
+    }
+
+    @Test
+    public void getOrganizationByIdShouldPass() {
+        long id = 1;
+        String existingName = "Existing Name";
+        Organization organization = new Organization();
+        organization.setId(id);
+        organization.setName(existingName);
+        when(organizationRepository.existsById(id)).thenReturn(true);
+        when(organizationRepository.findById(id)).thenReturn(Optional.of(organization));
+
+        Optional<Organization> result = organizationService.getOrganizationById(id);
+        assertEquals(organization, result.get());
     }
 }
