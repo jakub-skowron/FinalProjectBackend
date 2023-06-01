@@ -19,9 +19,9 @@ public class RoomService {
         return new HashSet<>(roomRepository.findAll());
     }
 
-    public Optional<Room> getRoomById(Long id) {
+    public Room getRoomById(Long id) {
         if (roomRepository.existsById(id)) {
-            return roomRepository.findById(id);
+            return roomRepository.findById(id).get();
         } else {
             throw new IllegalArgumentException("The Room with inserted id doesn't exist");
         }
