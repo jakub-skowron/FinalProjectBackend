@@ -40,13 +40,13 @@ public class Room {
     @NotNull
     private int level;
 
-    @NotNull
-    private boolean availability;
+    private boolean availability = true;
 
     @ElementCollection
     @CollectionTable(name = "room_places_mapping", joinColumns = @JoinColumn(name = "room_id"))
     @MapKeyColumn(name = "place_type")
     @Column(name = "number_of_places")
+    @NotNull
     private Map<PlaceType, Integer> places;
 
     public void setNumberOfPlaces(PlaceType placeType, int numberOfPlaces) {

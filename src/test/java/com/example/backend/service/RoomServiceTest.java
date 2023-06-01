@@ -44,7 +44,6 @@ class RoomServiceTest {
                 .withId(1)
                 .withName("Valid Name")
                 .withIdentifier("Valid Identifier")
-                .withAvailability(true)
                 .withLevel(1)
                 .withPlaces(places)
                 .build();
@@ -87,6 +86,35 @@ class RoomServiceTest {
         softly.assertThat(1).isEqualTo(violations.size());
         softly.assertThat(expectedErrorMessage).isEqualTo(violation.getMessage());
         softly.assertThat("identifier").isEqualTo(violation.getPropertyPath().toString());
+        softly.assertAll();
+    }
+
+    @ParameterizedTest
+    @CsvSource({"-1, must be greater than or equal to 0", "11, must be less than or equal to 10"})
+    public void addRoomWithInvalidLevelThrowException(Integer number, String expectedErrorMessage) {
+        room.setLevel(number);
+
+        Set<ConstraintViolation<Room>> violations = validator.validate(room);
+        ConstraintViolation<Room> violation = violations.iterator().next();
+
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(1).isEqualTo(violations.size());
+        softly.assertThat(expectedErrorMessage).isEqualTo(violation.getMessage());
+        softly.assertThat("level").isEqualTo(violation.getPropertyPath().toString());
+        softly.assertAll();
+    }
+
+    @Test
+    public void addRoomWithInvalidPlacesThrowException() {
+        room.setPlaces(null);
+
+        Set<ConstraintViolation<Room>> violations = validator.validate(room);
+        ConstraintViolation<Room> violation = violations.iterator().next();
+
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(1).isEqualTo(violations.size());
+        softly.assertThat("must not be null").isEqualTo(violation.getMessage());
+        softly.assertThat("places").isEqualTo(violation.getPropertyPath().toString());
         softly.assertAll();
     }
 }
