@@ -1,7 +1,9 @@
 package com.example.backend.service;
 
 import com.example.backend.model.Organization;
+import com.example.backend.model.Room;
 import com.example.backend.repository.OrganizationRepository;
+import com.example.backend.repository.RoomRepository;
 import jakarta.annotation.Resource;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -28,6 +30,9 @@ class OrganizationServiceTest {
     private Validator validator;
     @Mock
     OrganizationRepository organizationRepository;
+
+    @Mock
+    RoomRepository roomRepository;
 
     @Resource
     @InjectMocks
@@ -158,10 +163,10 @@ class OrganizationServiceTest {
     @Test
     public void getOrganizationByIdShouldPass() {
         long id = 1;
-        String existingName = "Existing Name";
+        String name = "Valid Name";
         Organization organization = new Organization();
         organization.setId(id);
-        organization.setName(existingName);
+        organization.setName(name);
         when(organizationRepository.existsById(id)).thenReturn(true);
         when(organizationRepository.findById(id)).thenReturn(Optional.of(organization));
 
@@ -172,10 +177,10 @@ class OrganizationServiceTest {
     @Test
     public void deleteOrganizationByIdShouldPass() {
         long id = 1;
-        String existingName = "Existing Name";
+        String name = "Valid Name";
         Organization organization = new Organization();
         organization.setId(id);
-        organization.setName(existingName);
+        organization.setName(name);
         when(organizationRepository.existsById(id)).thenReturn(true);
 
         organizationService.removeOrganizationById(id);
@@ -195,10 +200,10 @@ class OrganizationServiceTest {
     @Test
     public void updateOrganizationByIdShouldPass() {
         long id = 1;
-        String existingName = "Existing Name";
+        String name = "Valid Name";
         Organization organization = new Organization();
         organization.setId(id);
-        organization.setName(existingName);
+        organization.setName(name);
         when(organizationRepository.existsById(id)).thenReturn(true);
 
         organizationService.updateOrganizationNameById(id, organization);
@@ -208,14 +213,113 @@ class OrganizationServiceTest {
     @Test
     public void updateOrganizationByIdWithInvalidIdShouldThrowException() {
         long id = 1;
-        String existingName = "Existing Name";
+        String name = "Valid Name";
         Organization organization = new Organization();
         organization.setId(id);
-        organization.setName(existingName);
+        organization.setName(name);
         when(organizationRepository.existsById(id)).thenReturn(false);
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             organizationService.updateOrganizationNameById(id, organization);
+        });
+    }
+
+    @Test
+    public void addRoomToOrganizationShouldPass() {
+        long id = 1;
+        String name = "Valid Name";
+
+        Organization organization = new Organization();
+        organization.setId(id);
+        organization.setName(name);
+
+        Room room = new Room();
+        room.setId(id);
+        room.setName(name);
+        room.setAvailability(true);
+        room.setIdentifier("Random Name");
+        room.setLevel(Room.Level.ONE);
+
+        when(organizationRepository.existsById(id)).thenReturn(true);
+        when(roomRepository.existsById(id)).thenReturn(true);
+        when(organizationRepository.findById(id)).thenReturn(Optional.of(organization));
+        when(roomRepository.findById(id)).thenReturn(Optional.of(room));
+
+        organizationService.addRoomToOrganization(organization.getId(), room.getId());
+        verify(roomRepository).save(room);
+    }
+
+    @Test
+    public void addRoomToOrganizationWithInvalidRoomIdShouldThrowException() {
+        long id = 1;
+        String name = "Valid Name";
+
+        Organization organization = new Organization();
+        organization.setId(id);
+        organization.setName(name);
+
+        Room room = new Room();
+        room.setId(id);
+        room.setName(name);
+        room.setAvailability(true);
+        room.setIdentifier("Random Name");
+        room.setLevel(Room.Level.ONE);
+
+        when(organizationRepository.existsById(id)).thenReturn(true);
+        when(roomRepository.existsById(id)).thenReturn(false);
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            organizationService.addRoomToOrganization(organization.getId(), room.getId());
+        });
+    }
+
+    @Test
+    public void addRoomToOrganizationWithInvalidOrganizationIdShouldThrowException() {
+        long id = 1;
+        String name = "Valid Name";
+
+        Organization organization = new Organization();
+        organization.setId(id);
+        organization.setName(name);
+
+        Room room = new Room();
+        room.setId(id);
+        room.setName(name);
+        room.setAvailability(true);
+        room.setIdentifier("Random Name");
+        room.setLevel(Room.Level.ONE);
+
+        when(organizationRepository.existsById(id)).thenReturn(false);
+        when(roomRepository.existsById(id)).thenReturn(true);
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            organizationService.addRoomToOrganization(organization.getId(), room.getId());
+        });
+    }
+
+    @Test
+    public void addUnavailableRoomToOrganizationShouldThrowException() {
+        long id = 1;
+        String name = "Valid Name";
+
+        Organization organization = new Organization();
+        organization.setId(id);
+        organization.setName(name);
+
+        Room room = new Room();
+        room.setId(id);
+        room.setName(name);
+        room.setAvailability(false);
+        room.setIdentifier("Random Name");
+        room.setLevel(Room.Level.ONE);
+
+        when(organizationRepository.existsById(id)).thenReturn(true);
+        when(roomRepository.existsById(id)).thenReturn(true);
+        when(organizationRepository.findById(id)).thenReturn(Optional.of(organization));
+        when(roomRepository.findById(id)).thenReturn(Optional.of(room));
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            organizationService.addRoomToOrganization(organization.getId(), room.getId());
         });
     }
 }
