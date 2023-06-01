@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Entity
 @Getter
 @Setter
@@ -23,4 +25,7 @@ public class Organization {
     @Size(min = 2, max = 20)
     @Column(unique = true)
     private String name;
+
+    @OneToMany(mappedBy = "organization")
+    private Set<Room> rooms;
 }
