@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Entity
@@ -33,7 +34,6 @@ public class Room {
     @Column(unique = true)
     private String name;
 
-    @NotBlank
     @Size(min = 2, max = 20)
     @Column(unique = true)
     private String identifier;
@@ -44,11 +44,36 @@ public class Room {
     @NotNull
     private boolean availability;
 
-    //add the number of places - sitting and standing
-    //numberOfPlaces
+    @ElementCollection
+    @CollectionTable(name = "room_places_mapping", joinColumns = @JoinColumn(name = "room_id"))
+    @MapKeyColumn(name = "place_type")
+    @Column(name = "number_of_places")
+    private Map<PlaceType, Integer> places;
 
-    enum Level {
-        ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN
+    public void setNumberOfPlaces(PlaceType placeType, int numberOfPlaces) {
+        places.put(placeType, numberOfPlaces);
+    }
+
+    public int getNumberOfPlaces(PlaceType placeType) {
+        return places.getOrDefault(placeType, 0);
+    }
+
+    public enum Level {
+        ZERO(0), ONE(1), TWO(2), THREE(3), FOUR(4), FIVE(5),
+        SIX(6), SEVEN(7), EIGHT(8), NINE(9), TEN(10);
+
+        private final int number;
+
+        Level(int number) {
+            this.number = number;
+        }
+
+        public int getNumber() {
+            return number;
+        }
+    }
+    public enum PlaceType {
+        SITTING, STANDING
     }
 }
 
