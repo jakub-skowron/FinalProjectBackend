@@ -1,6 +1,5 @@
 package com.example.backend.service;
 
-import com.example.backend.model.Organization;
 import com.example.backend.model.Room;
 import com.example.backend.repository.RoomRepository;
 import jakarta.annotation.Resource;
@@ -22,6 +21,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class RoomServiceTest {
@@ -165,5 +165,32 @@ class RoomServiceTest {
 
         Room result = roomService.getRoomById(room.getId());
         assertEquals(room, result);
+    }
+
+    @Test
+    public void getRoomByIdWithInvalidIdShouldThrowException() {
+        when(roomRepository.existsById(room.getId())).thenReturn(false);
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            roomService.getRoomById(room.getId());
+        });
+    }
+
+    @Test
+    public void deleteRoomByIdShouldPass() {
+        when(roomRepository.existsById(room.getId())).thenReturn(true);
+        when(roomRepository.findById(room.getId())).thenReturn(Optional.of(room));
+
+        roomService.removeRoomById(room.getId());
+        verify(roomRepository).deleteById(room.getId());
+    }
+
+    @Test
+    public void deleteRoomByIdWithinvalidIdShouldThrowException() {
+        when(roomRepository.existsById(room.getId())).thenReturn(false);
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            roomService.removeRoomById(room.getId());
+        });
     }
 }
