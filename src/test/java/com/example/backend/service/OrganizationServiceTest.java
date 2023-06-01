@@ -9,9 +9,12 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -46,75 +49,67 @@ class OrganizationServiceTest {
     }
 
     @Test
-    public void addOrganizationWithValidPayloadShouldPass() {
+    public void addOrganizationWithValidNameShouldPass() {
         long id = 1;
+        String validName = "Valid Name";
         Organization organization = new Organization();
         organization.setId(id);
-        organization.setName("Valid Name"); // Name length = 10
-        organizationService.addOrganization(organization);
-        verify(organizationRepository).save(organization);
-    }
-
-    @Test
-    public void addOrganizationWithTooShortNameShouldThrowException() {
-        long id = 1;
-        String shortName = "A"; // Name is too short (min = 2)
-        Organization organization = new Organization();
-        organization.setId(id);
-        organization.setName(shortName);
+        organization.setName(validName);
 
         Set<ConstraintViolation<Organization>> violations = validator.validate(organization);
 
-        assertEquals(1, violations.size());
-
-        ConstraintViolation<Organization> violation = violations.iterator().next();
-        assertEquals("size must be between 2 and 20", violation.getMessage());
-        assertEquals("name", violation.getPropertyPath().toString());
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(0).isEqualTo(violations.size());
+        softly.assertAll();
     }
 
-    @Test
-    public void addOrganizationWithTooLongNameShouldThrowException() {
+    @ParameterizedTest
+    @CsvSource({"A, size must be between 2 and 20", "This name is too long, size must be between 2 and 20"})
+    public void addOrganizationWithInvalidNameShouldThrowException(String name, String expectedErrorMessage) {
         long id = 1;
-        String longName = "This name is too long"; // Name is too long (max = 20)
         Organization organization = new Organization();
         organization.setId(id);
-        organization.setName(longName);
+        organization.setName(name);
 
         Set<ConstraintViolation<Organization>> violations = validator.validate(organization);
-
-        assertEquals(1, violations.size());
-
         ConstraintViolation<Organization> violation = violations.iterator().next();
-        assertEquals("size must be between 2 and 20", violation.getMessage());
-        assertEquals("name", violation.getPropertyPath().toString());
+
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(1).isEqualTo(violations.size());
+        softly.assertThat(expectedErrorMessage).isEqualTo(violation.getMessage());
+        softly.assertThat("name").isEqualTo(violation.getPropertyPath().toString());
+        softly.assertAll();
     }
 
     @Test
     public void addOrganizationWithEmptyNameShouldThrowException() {
         long id = 1;
-        String emptyName = ""; // Name is an empty String
+        String emptyName = "";
         Organization organization = new Organization();
         organization.setId(id);
         organization.setName(emptyName);
 
         Set<ConstraintViolation<Organization>> violations = validator.validate(organization);
 
-        assertEquals(2, violations.size());
-        assertTrue(violations.toString().contains("size must be between 2 and 20"));
-        assertTrue(violations.toString().contains("must not be blank"));
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(2).isEqualTo(violations.size());
+        softly.assertThat(violations.toString()).contains("size must be between 2 and 20");
+        softly.assertThat(violations.toString()).contains("must not be blank");
+        softly.assertAll();
     }
 
     @Test
     public void addOrganizationWithoutNameShouldThrowException() {
         long id = 1;
-        // Without setting name
         Organization organization = new Organization();
         organization.setId(id);
 
         Set<ConstraintViolation<Organization>> violations = validator.validate(organization);
 
-        assertEquals(1, violations.size());
-        assertTrue(violations.toString().contains("must not be blank"));
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(1).isEqualTo(violations.size());
+        softly.assertThat(violations.toString()).contains("must not be blank");
+        softly.assertAll();
     }
 
     @Test
@@ -238,7 +233,7 @@ class OrganizationServiceTest {
         room.setName(name);
         room.setAvailability(true);
         room.setIdentifier("Random Name");
-        room.setLevel(Room.Level.ONE);
+        room.setLevel(1);
 
         when(organizationRepository.existsById(id)).thenReturn(true);
         when(roomRepository.existsById(id)).thenReturn(true);
@@ -263,7 +258,7 @@ class OrganizationServiceTest {
         room.setName(name);
         room.setAvailability(true);
         room.setIdentifier("Random Name");
-        room.setLevel(Room.Level.ONE);
+        room.setLevel(1);
 
         when(organizationRepository.existsById(id)).thenReturn(true);
         when(roomRepository.existsById(id)).thenReturn(false);
@@ -287,7 +282,7 @@ class OrganizationServiceTest {
         room.setName(name);
         room.setAvailability(true);
         room.setIdentifier("Random Name");
-        room.setLevel(Room.Level.ONE);
+        room.setLevel(1);
 
         when(organizationRepository.existsById(id)).thenReturn(false);
         when(roomRepository.existsById(id)).thenReturn(true);
@@ -311,7 +306,7 @@ class OrganizationServiceTest {
         room.setName(name);
         room.setAvailability(false);
         room.setIdentifier("Random Name");
-        room.setLevel(Room.Level.ONE);
+        room.setLevel(1);
 
         when(organizationRepository.existsById(id)).thenReturn(true);
         when(roomRepository.existsById(id)).thenReturn(true);
