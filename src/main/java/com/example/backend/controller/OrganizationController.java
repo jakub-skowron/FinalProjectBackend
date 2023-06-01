@@ -21,7 +21,7 @@ public class OrganizationController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Organization> getOrganizationById(@PathVariable long id) {
+    public Organization getOrganizationById(@PathVariable long id) {
         return organizationService.getOrganizationById(id);
     }
 

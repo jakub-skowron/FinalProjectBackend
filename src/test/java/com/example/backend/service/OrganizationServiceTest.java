@@ -170,8 +170,8 @@ class OrganizationServiceTest {
         when(organizationRepository.existsById(id)).thenReturn(true);
         when(organizationRepository.findById(id)).thenReturn(Optional.of(organization));
 
-        Optional<Organization> result = organizationService.getOrganizationById(id);
-        assertEquals(organization, result.get());
+        Organization result = organizationService.getOrganizationById(id);
+        assertEquals(organization, result);
     }
 
     @Test
