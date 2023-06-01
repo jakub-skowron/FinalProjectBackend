@@ -1,5 +1,6 @@
 package com.example.backend.service;
 
+import com.example.backend.model.Organization;
 import com.example.backend.model.Room;
 import com.example.backend.repository.RoomRepository;
 import jakarta.annotation.Resource;
@@ -8,6 +9,7 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,9 +18,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 class RoomServiceTest {
     private Validator validator;
@@ -89,9 +93,39 @@ class RoomServiceTest {
         softly.assertAll();
     }
 
+    @Test
+    public void addRoomWithExistedNameShouldThrowException() {
+
+        when(roomRepository.existsByName(room.getName())).thenReturn(true);
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            roomService.addRoom(room);
+        });
+    }
+
+    @Test
+    public void addRoomWithExistedIdShouldThrowException() {
+
+        when(roomRepository.existsById(room.getId())).thenReturn(true);
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            roomService.addRoom(room);
+        });
+    }
+
+    @Test
+    public void addRoomWithExistedIdentifierShouldThrowException() {
+
+        when(roomRepository.existsByIdentifier(room.getIdentifier())).thenReturn(true);
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            roomService.addRoom(room);
+        });
+    }
+
     @ParameterizedTest
     @CsvSource({"-1, must be greater than or equal to 0", "11, must be less than or equal to 10"})
-    public void addRoomWithInvalidLevelThrowException(Integer number, String expectedErrorMessage) {
+    public void addRoomWithInvalidLevelShouldThrowException(Integer number, String expectedErrorMessage) {
         room.setLevel(number);
 
         Set<ConstraintViolation<Room>> violations = validator.validate(room);
@@ -105,7 +139,7 @@ class RoomServiceTest {
     }
 
     @Test
-    public void addRoomWithInvalidPlacesThrowException() {
+    public void addRoomWithoutPlacesShouldThrowException() {
         room.setPlaces(null);
 
         Set<ConstraintViolation<Room>> violations = validator.validate(room);
@@ -116,5 +150,20 @@ class RoomServiceTest {
         softly.assertThat("must not be null").isEqualTo(violation.getMessage());
         softly.assertThat("places").isEqualTo(violation.getPropertyPath().toString());
         softly.assertAll();
+    }
+
+    @Test
+    public void getRoomsShouldPass() {
+        when(roomRepository.findAll()).thenReturn(new ArrayList<>());
+        assertTrue(roomService.getRooms().isEmpty());
+    }
+
+    @Test
+    public void getRoomByIdShouldPass() {
+        when(roomRepository.existsById(room.getId())).thenReturn(true);
+        when(roomRepository.findById(room.getId())).thenReturn(Optional.of(room));
+
+        Room result = roomService.getRoomById(room.getId());
+        assertEquals(room, result);
     }
 }
