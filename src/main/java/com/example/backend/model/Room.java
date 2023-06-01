@@ -2,9 +2,7 @@ package com.example.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -37,16 +35,18 @@ public class Room {
     @Column(unique = true)
     private String identifier;
 
+    @Min(0)
+    @Max(10)
     @NotNull
-    private Level level;
+    private int level;
 
-    @NotNull
-    private boolean availability;
+    private boolean availability = true;
 
     @ElementCollection
     @CollectionTable(name = "room_places_mapping", joinColumns = @JoinColumn(name = "room_id"))
     @MapKeyColumn(name = "place_type")
     @Column(name = "number_of_places")
+    @NotNull
     private Map<PlaceType, Integer> places;
 
     public void setNumberOfPlaces(PlaceType placeType, int numberOfPlaces) {
@@ -57,22 +57,55 @@ public class Room {
         return places.getOrDefault(placeType, 0);
     }
 
-    public enum Level {
-        ZERO(0), ONE(1), TWO(2), THREE(3), FOUR(4), FIVE(5),
-        SIX(6), SEVEN(7), EIGHT(8), NINE(9), TEN(10);
-
-        private final int number;
-
-        Level(int number) {
-            this.number = number;
-        }
-
-        public int getNumber() {
-            return number;
-        }
-    }
     public enum PlaceType {
         SITTING, STANDING
+    }
+
+    public static class Builder {
+        private Room room;
+
+        public Builder() {
+            room = new Room();
+        }
+
+        public Builder withId(long id) {
+            room.setId(id);
+            return this;
+        }
+
+        public Builder withOrganization(Organization organization) {
+            room.setOrganization(organization);
+            return this;
+        }
+
+        public Builder withName(String name) {
+            room.setName(name);
+            return this;
+        }
+
+        public Builder withIdentifier(String identifier) {
+            room.setIdentifier(identifier);
+            return this;
+        }
+
+        public Builder withLevel(int level) {
+            room.setLevel(level);
+            return this;
+        }
+
+        public Builder withAvailability(boolean availability) {
+            room.setAvailability(availability);
+            return this;
+        }
+
+        public Builder withPlaces(Map<Room.PlaceType, Integer> places) {
+            room.setPlaces(places);
+            return this;
+        }
+
+        public Room build() {
+            return room;
+        }
     }
 }
 

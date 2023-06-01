@@ -28,9 +28,15 @@ public class RoomService {
     }
 
     public void addRoom(Room room) {
-        if (!roomRepository.existsById(room.getId()) && !roomRepository.existsByName(room.getName())) {
+        boolean roomExists = roomRepository.existsById(room.getId())
+                || roomRepository.existsByName(room.getName())
+                || roomRepository.existsByIdentifier(room.getIdentifier());
+
+        if (!roomExists) {
             roomRepository.save(room);
-        } else throw new IllegalArgumentException("The Room name or id already exists!");
+        } else {
+            throw new IllegalArgumentException("The Room name, id or identifier already exists!");
+        }
     }
 
     public void removeRoomById(Long id) {
