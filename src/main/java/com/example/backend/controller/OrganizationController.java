@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @RestController
-//@CrossOrigin(origins ="http://localhost:4200")
+@CrossOrigin(origins ="http://localhost:4200")
 @RequestMapping("/organizations")
 public class OrganizationController {
     @Autowired
@@ -33,5 +33,10 @@ public class OrganizationController {
     @DeleteMapping("/{id}")
     public void removeOneOrganization(@PathVariable Long id) {
         organizationService.removeOrganizationById(id);
+    }
+
+    @PutMapping("/{id}")
+    public void updateOneOrganization(@PathVariable Long id, @RequestBody Organization organization) {
+        organizationService.updateOrganizationNameById(id, organization);
     }
 }

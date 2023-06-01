@@ -40,4 +40,13 @@ public class OrganizationService {
             throw new IllegalArgumentException("The Organization with inserted id doesn't exist");
         }
     }
+
+    public void updateOrganizationNameById(long id, Organization organization) {
+        if (organizationRepository.existsById(id)) {
+            organization.setId(id);
+            organizationRepository.save(organization);
+        } else {
+            throw new IllegalArgumentException("The Organization with inserted id doesn't exist");
+        }
+    }
 }

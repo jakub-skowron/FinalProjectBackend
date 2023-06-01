@@ -177,6 +177,7 @@ class OrganizationServiceTest {
         organization.setId(id);
         organization.setName(existingName);
         when(organizationRepository.existsById(id)).thenReturn(true);
+
         organizationService.removeOrganizationById(id);
         verify(organizationRepository).deleteById(id);
     }
@@ -188,6 +189,33 @@ class OrganizationServiceTest {
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             organizationService.removeOrganizationById(id);
+        });
+    }
+
+    @Test
+    public void updateOrganizationByIdShouldPass() {
+        long id = 1;
+        String existingName = "Existing Name";
+        Organization organization = new Organization();
+        organization.setId(id);
+        organization.setName(existingName);
+        when(organizationRepository.existsById(id)).thenReturn(true);
+
+        organizationService.updateOrganizationNameById(id, organization);
+        verify(organizationRepository).save(organization);
+    }
+
+    @Test
+    public void updateOrganizationByIdWithInvalidIdShouldThrowException() {
+        long id = 1;
+        String existingName = "Existing Name";
+        Organization organization = new Organization();
+        organization.setId(id);
+        organization.setName(existingName);
+        when(organizationRepository.existsById(id)).thenReturn(false);
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            organizationService.updateOrganizationNameById(id, organization);
         });
     }
 }
