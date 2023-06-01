@@ -24,9 +24,9 @@ public class OrganizationService {
         return new HashSet<>(organizationRepository.findAll());
     }
 
-    public Optional<Organization> getOrganizationById(Long id) {
+    public Organization getOrganizationById(Long id) {
         if (organizationRepository.existsById(id)) {
-            return organizationRepository.findById(id);
+            return organizationRepository.findById(id).get();
         } else {
             throw new IllegalArgumentException("The Organization with inserted id doesn't exist");
         }
