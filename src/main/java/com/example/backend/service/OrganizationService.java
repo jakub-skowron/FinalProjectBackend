@@ -1,7 +1,9 @@
 package com.example.backend.service;
 
 import com.example.backend.model.Organization;
+import com.example.backend.model.Room;
 import com.example.backend.repository.OrganizationRepository;
+import com.example.backend.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,9 @@ public class OrganizationService {
 
     @Autowired
     OrganizationRepository organizationRepository;
+
+    @Autowired
+    RoomRepository roomRepository;
 
     public Set<Organization> getOrganizations() {
         return new HashSet<>(organizationRepository.findAll());
@@ -47,6 +52,22 @@ public class OrganizationService {
             organizationRepository.save(organization);
         } else {
             throw new IllegalArgumentException("The Organization with inserted id doesn't exist");
+        }
+    }
+
+    public void addRoomToOrganization(long organizationId, long roomId) {
+        if (organizationRepository.existsById(organizationId) && roomRepository.existsById(roomId)) {
+            Organization organization = organizationRepository.findById(organizationId).get();
+            Room room = roomRepository.findById(roomId).get();
+            if (room.isAvailability()){
+                room.setOrganization(organization);
+                roomRepository.save(room);
+            }
+            else{
+                throw new IllegalArgumentException("The room is already booked");
+            }
+        } else {
+            throw new IllegalArgumentException("There is no organization or room with inserted id");
         }
     }
 }

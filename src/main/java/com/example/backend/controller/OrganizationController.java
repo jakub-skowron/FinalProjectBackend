@@ -39,4 +39,10 @@ public class OrganizationController {
     public void updateOneOrganization(@PathVariable Long id, @RequestBody Organization organization) {
         organizationService.updateOrganizationNameById(id, organization);
     }
+
+    @PatchMapping("/{organizationId}/rooms/{roomId}")
+    public void addOneRoomToOrganization(@PathVariable long organizationId,
+                                  @PathVariable long roomId) {
+        organizationService.addRoomToOrganization(organizationId, roomId);
+    }
 }
