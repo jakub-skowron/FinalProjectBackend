@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Map;
 
 @Entity
@@ -26,11 +27,15 @@ public class Room {
     @JoinColumn(name = "organization_id", columnDefinition = "integer")
     private Organization organization;
 
+    @OneToMany(mappedBy = "room", cascade = CascadeType.REMOVE)
+    private List<Reservation> reservations;
+
     @NotBlank
     @Size(min = 2, max = 20)
     @Column(unique = true)
     private String name;
 
+    @NotBlank
     @Size(min = 2, max = 20)
     @Column(unique = true)
     private String identifier;
