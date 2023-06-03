@@ -23,7 +23,7 @@ public class Room {
 
     @JsonIgnore
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinColumn(name = "room_id", columnDefinition = "integer")
+    @JoinColumn(name = "organization_id", columnDefinition = "integer")
     private Organization organization;
 
     @NotBlank
