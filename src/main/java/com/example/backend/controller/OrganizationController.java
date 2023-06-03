@@ -5,18 +5,17 @@ import com.example.backend.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-import java.util.Set;
+import java.util.List;
 
 @RestController
-@CrossOrigin(origins ="http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/organizations")
 public class OrganizationController {
     @Autowired
     OrganizationService organizationService;
 
     @GetMapping("")
-    public Set<Organization> getAllOrganizations() {
+    public List<Organization> getAllOrganizations() {
         return organizationService.getOrganizations();
     }
 
@@ -42,7 +41,7 @@ public class OrganizationController {
 
     @PatchMapping("/{organizationId}/rooms/{roomId}")
     public void addOneRoomToOrganization(@PathVariable long organizationId,
-                                  @PathVariable long roomId) {
+                                         @PathVariable long roomId) {
         organizationService.addRoomToOrganization(organizationId, roomId);
     }
 }

@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Getter
@@ -27,5 +27,5 @@ public class Organization {
     private String name;
 
     @OneToMany(mappedBy = "organization", cascade = CascadeType.REMOVE)
-    private Set<Room> rooms;
+    private List<Room> rooms;
 }

@@ -7,16 +7,15 @@ import com.example.backend.repository.ReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Service
 public class ReservationService {
     @Autowired
     ReservationRepository reservationRepository;
 
-    public Set<Reservation> getReservations() {
-        return new HashSet<>(reservationRepository.findAll());
+    public List<Reservation> getReservations() {
+        return reservationRepository.findAll();
     }
 
     public Reservation getReservationById(long id) {

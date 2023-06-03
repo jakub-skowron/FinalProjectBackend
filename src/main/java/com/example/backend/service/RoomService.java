@@ -7,8 +7,7 @@ import com.example.backend.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 
 @Service
@@ -16,8 +15,8 @@ public class RoomService {
     @Autowired
     RoomRepository roomRepository;
 
-    public Set<Room> getRooms() {
-        return new HashSet<>(roomRepository.findAll());
+    public List<Room> getRooms() {
+        return roomRepository.findAll();
     }
 
     public Room getRoomById(Long id) {

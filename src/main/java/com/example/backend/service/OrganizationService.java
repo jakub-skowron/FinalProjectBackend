@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -21,8 +22,8 @@ public class OrganizationService {
     @Autowired
     RoomRepository roomRepository;
 
-    public Set<Organization> getOrganizations() {
-        return new HashSet<>(organizationRepository.findAll());
+    public List<Organization> getOrganizations() {
+        return organizationRepository.findAll();
     }
 
     public Organization getOrganizationById(Long id) {
