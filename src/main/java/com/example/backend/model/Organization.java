@@ -26,6 +26,6 @@ public class Organization {
     @Column(unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "organization")
+    @OneToMany(mappedBy = "organization", cascade = CascadeType.REMOVE)
     private Set<Room> rooms;
 }

@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -51,7 +50,7 @@ public class OrganizationService {
             organization.setId(id);
             organizationRepository.save(organization);
         } else {
-            throw new IllegalArgumentException("The Organization with inserted id doesn't exist");
+            throw new IllegalArgumentException("The Organization with inserted" + id + "doesn't exist");
         }
     }
 
@@ -59,12 +58,12 @@ public class OrganizationService {
         if (organizationRepository.existsById(organizationId) && roomRepository.existsById(roomId)) {
             Organization organization = organizationRepository.findById(organizationId).get();
             Room room = roomRepository.findById(roomId).get();
-            if (room.isAvailability()){
+            if (room.isAvailability()) {
+                room.setAvailability(false);
                 room.setOrganization(organization);
                 roomRepository.save(room);
-            }
-            else{
-                throw new IllegalArgumentException("The room is already booked");
+            } else {
+                throw new IllegalArgumentException("The room is not available");
             }
         } else {
             throw new IllegalArgumentException("There is no organization or room with inserted id");
