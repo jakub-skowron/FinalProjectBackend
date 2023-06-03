@@ -1,5 +1,7 @@
 package com.example.backend.service;
 
+import com.example.backend.exceptions.ObjectAlreadyExistsException;
+import com.example.backend.exceptions.ObjectNotFoundException;
 import com.example.backend.model.Organization;
 import com.example.backend.model.Room;
 import com.example.backend.repository.OrganizationRepository;
@@ -27,21 +29,21 @@ public class OrganizationService {
         if (organizationRepository.existsById(id)) {
             return organizationRepository.findById(id).get();
         } else {
-            throw new IllegalArgumentException("The Organization with inserted id doesn't exist");
+            throw new ObjectNotFoundException("The Organization with inserted id doesn't exist");
         }
     }
 
     public void addOrganization(Organization organization) {
         if (!organizationRepository.existsById(organization.getId()) && !organizationRepository.existsByName(organization.getName())) {
             organizationRepository.save(organization);
-        } else throw new IllegalArgumentException("The Organization name or id already exists!");
+        } else throw new ObjectAlreadyExistsException("The Organization name or id already exists!");
     }
 
     public void removeOrganizationById(Long id) {
         if (organizationRepository.existsById(id)) {
             organizationRepository.deleteById(id);
         } else {
-            throw new IllegalArgumentException("The Organization with inserted id doesn't exist");
+            throw new ObjectNotFoundException("The Organization with inserted id doesn't exist");
         }
     }
 
@@ -50,7 +52,7 @@ public class OrganizationService {
             organization.setId(id);
             organizationRepository.save(organization);
         } else {
-            throw new IllegalArgumentException("The Organization with inserted" + id + "doesn't exist");
+            throw new ObjectNotFoundException("The Organization with inserted id doesn't exist");
         }
     }
 
@@ -66,7 +68,7 @@ public class OrganizationService {
                 throw new IllegalArgumentException("The room is not available");
             }
         } else {
-            throw new IllegalArgumentException("There is no organization or room with inserted id");
+            throw new ObjectNotFoundException("There is no organization or room with inserted id");
         }
     }
 }

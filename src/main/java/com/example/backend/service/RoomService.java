@@ -1,5 +1,7 @@
 package com.example.backend.service;
 
+import com.example.backend.exceptions.ObjectAlreadyExistsException;
+import com.example.backend.exceptions.ObjectNotFoundException;
 import com.example.backend.model.Room;
 import com.example.backend.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +24,7 @@ public class RoomService {
         if (roomRepository.existsById(id)) {
             return roomRepository.findById(id).get();
         } else {
-            throw new IllegalArgumentException("The Room with inserted id doesn't exist");
+            throw new ObjectNotFoundException("The Room with inserted id doesn't exist");
         }
     }
 
@@ -34,7 +36,7 @@ public class RoomService {
         if (!roomExists) {
             roomRepository.save(room);
         } else {
-            throw new IllegalArgumentException("The Room name, id or identifier already exists!");
+            throw new ObjectAlreadyExistsException("The Room name, id or identifier already exists!");
         }
     }
 
@@ -42,7 +44,7 @@ public class RoomService {
         if (roomRepository.existsById(id)) {
             roomRepository.deleteById(id);
         } else {
-            throw new IllegalArgumentException("The Room with inserted id doesn't exist");
+            throw new ObjectNotFoundException("The Room with inserted id doesn't exist");
         }
     }
 
@@ -51,7 +53,7 @@ public class RoomService {
             room.setId(id);
             roomRepository.save(room);
         } else {
-            throw new IllegalArgumentException("The Room with inserted id doesn't exist");
+            throw new ObjectNotFoundException("The Room with inserted id doesn't exist");
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.example.backend.service;
 
+import com.example.backend.exceptions.ObjectAlreadyExistsException;
+import com.example.backend.exceptions.ObjectNotFoundException;
 import com.example.backend.model.Reservation;
 import com.example.backend.repository.ReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,7 @@ public class ReservationService {
         if (reservationRepository.existsById(id)) {
             return reservationRepository.findById(id).get();
         } else {
-            throw new IllegalArgumentException("The Reservation with inserted id doesn't exist");
+            throw new ObjectNotFoundException("The Reservation with inserted id doesn't exist");
         }
     }
 
@@ -36,14 +38,14 @@ public class ReservationService {
             if (reservation.getStartReservationDateTime().isEqual(reservation.getEndReservationDateTime())) {
                 throw new IllegalArgumentException("The set date is invalid! Start Date is equal End Date!");
             }
-        } else throw new IllegalArgumentException("The Reservation identifier or id already exists!");
+        } else throw new ObjectAlreadyExistsException("The Reservation identifier or id already exists!");
     }
 
     public void removeReservationById(Long id) {
         if (reservationRepository.existsById(id)) {
             reservationRepository.deleteById(id);
         } else {
-            throw new IllegalArgumentException("The Reservation with inserted id doesn't exist");
+            throw new ObjectNotFoundException("The Reservation with inserted id doesn't exist");
         }
     }
 
@@ -52,7 +54,7 @@ public class ReservationService {
             reservation.setId(id);
             reservationRepository.save(reservation);
         } else {
-            throw new IllegalArgumentException("The Reservation with inserted id doesn't exist");
+            throw new ObjectNotFoundException("The Reservation with inserted id doesn't exist");
         }
     }
 }
