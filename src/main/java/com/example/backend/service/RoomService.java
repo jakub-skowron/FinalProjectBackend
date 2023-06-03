@@ -3,6 +3,7 @@ package com.example.backend.service;
 import com.example.backend.exceptions.ObjectAlreadyExistsException;
 import com.example.backend.exceptions.ObjectNotFoundException;
 import com.example.backend.model.Room;
+import com.example.backend.repository.OrganizationRepository;
 import com.example.backend.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,10 @@ import java.util.List;
 public class RoomService {
     @Autowired
     RoomRepository roomRepository;
+    @Autowired
+    OrganizationService organizationService;
+    @Autowired
+    OrganizationRepository organizationRepository;
 
     public List<Room> getRooms() {
         return roomRepository.findAll();
@@ -28,12 +33,18 @@ public class RoomService {
     }
 
     public void addRoom(Room room) {
+        long organizationId = room.getOrganizationId();
         boolean roomExists = roomRepository.existsById(room.getId())
                 || roomRepository.existsByName(room.getName())
                 || roomRepository.existsByIdentifier(room.getIdentifier());
 
         if (!roomExists) {
-            roomRepository.save(room);
+            if (organizationRepository.existsById(organizationId)) {
+                room.setOrganization(organizationService.getOrganizationById(organizationId));
+                roomRepository.save(room);
+            } else {
+                throw new ObjectNotFoundException("The Organization with inserted id doesn't exist!");
+            }
         } else {
             throw new ObjectAlreadyExistsException("The Room name, id or identifier already exists!");
         }
@@ -46,11 +57,17 @@ public class RoomService {
             throw new ObjectNotFoundException("The Room with inserted id doesn't exist");
         }
     }
-
+    //Entity To DTO Conversion for a Spring REST API
     public void updateRoomNameById(long id, Room room) {
+        long organizationId = room.getOrganizationId();
         if (roomRepository.existsById(id)) {
-            room.setId(id);
-            roomRepository.save(room);
+            if (organizationRepository.existsById(organizationId)) {
+                room.setOrganization(organizationService.getOrganizationById(organizationId));
+                room.setId(id);
+                roomRepository.save(room);
+            } else {
+                throw new ObjectNotFoundException("The Organization with inserted id doesn't exist!");
+            }
         } else {
             throw new ObjectNotFoundException("The Room with inserted id doesn't exist");
         }

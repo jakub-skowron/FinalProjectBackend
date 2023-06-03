@@ -6,6 +6,7 @@ import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Map;
@@ -53,6 +54,9 @@ public class Room {
     @Column(name = "number_of_places")
     @NotNull
     private Map<PlaceType, Integer> places;
+
+    @Transient
+    private long organizationId;
 
     public void setNumberOfPlaces(PlaceType placeType, int numberOfPlaces) {
         places.put(placeType, numberOfPlaces);
