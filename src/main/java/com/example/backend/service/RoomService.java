@@ -57,6 +57,7 @@ public class RoomService {
             throw new ObjectNotFoundException("The Room with inserted id doesn't exist");
         }
     }
+
     //Entity To DTO Conversion for a Spring REST API
     public void updateRoomNameById(long id, Room room) {
         long organizationId = room.getOrganizationId();

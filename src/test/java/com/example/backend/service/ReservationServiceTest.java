@@ -60,16 +60,13 @@ class ReservationServiceTest {
         reservation.setIdentifier(identifier);
         reservation.setStartReservationDateTime(startReservationDateTime);
         reservation.setEndReservationDateTime(endReservationDateTime);
-
     }
 
     @Test
     void ShouldNotReturnViolations() {
         Set<ConstraintViolation<Reservation>> violations = validator.validate(reservation);
 
-        SoftAssertions softly = new SoftAssertions();
-        softly.assertThat(0).isEqualTo(violations.size());
-        softly.assertAll();
+        assertEquals(0, violations.size());
     }
 
     @ParameterizedTest

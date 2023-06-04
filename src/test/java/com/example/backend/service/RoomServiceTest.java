@@ -1,5 +1,6 @@
 package com.example.backend.service;
 
+import com.example.backend.exceptions.ObjectNotFoundException;
 import com.example.backend.model.Room;
 import com.example.backend.repository.RoomRepository;
 import jakarta.annotation.Resource;
@@ -54,8 +55,7 @@ class RoomServiceTest {
     }
 
     @Test
-    public void addRoomWithValidPayloadShouldPass() {
-
+    public void ShouldNotReturnViolations() {
         Set<ConstraintViolation<Room>> violations = validator.validate(room);
 
         SoftAssertions softly = new SoftAssertions();
@@ -65,7 +65,7 @@ class RoomServiceTest {
 
     @ParameterizedTest
     @CsvSource({"A, size must be between 2 and 20", "This name is too long, size must be between 2 and 20"})
-    public void addRoomWithInvalidNameShouldThrowException(String name, String expectedErrorMessage) {
+    public void ifNameIsInvalidShouldReturnViolations(String name, String expectedErrorMessage) {
         room.setName(name);
 
         Set<ConstraintViolation<Room>> violations = validator.validate(room);
@@ -80,7 +80,7 @@ class RoomServiceTest {
 
     @ParameterizedTest
     @CsvSource({"A, size must be between 2 and 20", "This name is too long, size must be between 2 and 20"})
-    public void addRoomWithInvalidIdentifierShouldThrowException(String identifier, String expectedErrorMessage) {
+    public void ifIdentifierIsInvalidShouldReturnViolations(String identifier, String expectedErrorMessage) {
         room.setIdentifier(identifier);
 
         Set<ConstraintViolation<Room>> violations = validator.validate(room);
@@ -125,7 +125,7 @@ class RoomServiceTest {
 
     @ParameterizedTest
     @CsvSource({"-1, must be greater than or equal to 0", "11, must be less than or equal to 10"})
-    public void addRoomWithInvalidLevelShouldThrowException(Integer number, String expectedErrorMessage) {
+    public void ifLevelIsInvalidShouldReturnViolations(Integer number, String expectedErrorMessage) {
         room.setLevel(number);
 
         Set<ConstraintViolation<Room>> violations = validator.validate(room);
@@ -139,7 +139,7 @@ class RoomServiceTest {
     }
 
     @Test
-    public void addRoomWithoutPlacesShouldThrowException() {
+    public void ifPlacesAreNullShouldReturnViolations() {
         room.setPlaces(null);
 
         Set<ConstraintViolation<Room>> violations = validator.validate(room);
@@ -171,7 +171,7 @@ class RoomServiceTest {
     public void getRoomByIdWithInvalidIdShouldThrowException() {
         when(roomRepository.existsById(room.getId())).thenReturn(false);
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(ObjectNotFoundException.class, () -> {
             roomService.getRoomById(room.getId());
         });
     }
@@ -189,7 +189,7 @@ class RoomServiceTest {
     public void deleteRoomByIdWithinvalidIdShouldThrowException() {
         when(roomRepository.existsById(room.getId())).thenReturn(false);
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(ObjectNotFoundException.class, () -> {
             roomService.removeRoomById(room.getId());
         });
     }
