@@ -2,6 +2,7 @@ package com.example.backend.service;
 
 import com.example.backend.exceptions.*;
 import com.example.backend.model.Reservation;
+import com.example.backend.model.Room;
 import com.example.backend.repository.ReservationRepository;
 import com.example.backend.repository.RoomRepository;
 import org.slf4j.Logger;
@@ -56,8 +57,9 @@ public class ReservationService {
             throw new ObjectAlreadyExistsException("The reservation with inserted identifier already exists");
         }
         long roomId = reservation.getRoomId();
-        LOGGER.info("Reservation date checking");
+        LOGGER.info("Room availability checking");
         checkIfRoomIsAvailable(reservation.getRoomId());
+        LOGGER.info("Room availability checking completed");
         LOGGER.info("Reservation date checking");
         checkIfDateIsValid(reservation, reservation.getRoomId());
         LOGGER.info("Reservation date checking completed");
@@ -93,7 +95,11 @@ public class ReservationService {
     }
 
     private void checkIfRoomIsAvailable(long id) {
-
+        Room room = roomRepository.findById(id).get();
+        if (!room.isAvailability()) {
+            LOGGER.debug("The room with id {} is not available", id);
+            throw new IllegalArgumentException("The room is not available");
+        }
     }
 
     public void checkIfDateIsValid(Reservation reservation, long id) {
