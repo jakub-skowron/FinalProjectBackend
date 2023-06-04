@@ -125,6 +125,7 @@ public class ReservationService {
                 id,
                 reservation.getEndReservationDateTime(),
                 reservation.getStartReservationDateTime()).isPresent();
+        LOGGER.info(""+condition);
         if (condition) {
             LOGGER.debug("The room is already booked in this date");
             throw new DateInThePastException("The room is already booked in this date");
