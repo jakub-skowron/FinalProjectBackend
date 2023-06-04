@@ -34,4 +34,7 @@ public class Reservation {
     @JoinColumn(name = "room_id", columnDefinition = "integer")
     private Room room;
 
+    @Transient
+    private long roomId;
+
 }

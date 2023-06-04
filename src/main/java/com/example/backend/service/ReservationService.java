@@ -14,6 +14,9 @@ public class ReservationService {
     @Autowired
     ReservationRepository reservationRepository;
 
+    @Autowired
+    RoomService roomService;
+
     public List<Reservation> getReservations() {
         return reservationRepository.findAll();
     }
@@ -27,15 +30,17 @@ public class ReservationService {
     }
 
     public void addReservation(Reservation reservation) {
+        long roomId = reservation.getRoomId();
         if (!reservationRepository.existsById(reservation.getId()) && !reservationRepository.existsByIdentifier(reservation.getIdentifier())) {
-            if (reservation.getStartReservationDateTime().isBefore(reservation.getEndReservationDateTime())) {
-                reservationRepository.save(reservation);
-            }
             if (reservation.getStartReservationDateTime().isAfter(reservation.getEndReservationDateTime())) {
                 throw new IllegalArgumentException("The set date is invalid! Start Date is after End Date!");
             }
             if (reservation.getStartReservationDateTime().isEqual(reservation.getEndReservationDateTime())) {
                 throw new IllegalArgumentException("The set date is invalid! Start Date is equal End Date!");
+            }
+            if (reservation.getStartReservationDateTime().isBefore(reservation.getEndReservationDateTime())) {
+                reservation.setRoom(roomService.getRoomById(roomId));
+                reservationRepository.save(reservation);
             }
         } else throw new ObjectAlreadyExistsException("The Reservation identifier or id already exists!");
     }
