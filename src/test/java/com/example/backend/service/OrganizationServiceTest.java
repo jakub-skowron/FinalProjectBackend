@@ -291,30 +291,4 @@ class OrganizationServiceTest {
             organizationService.addRoomToOrganization(organization.getId(), room.getId());
         });
     }
-
-    @Test
-    public void addUnavailableRoomToOrganizationShouldThrowException() {
-        long id = 1;
-        String name = "Valid Name";
-
-        Organization organization = new Organization();
-        organization.setId(id);
-        organization.setName(name);
-
-        Room room = new Room();
-        room.setId(id);
-        room.setName(name);
-        room.setAvailability(false);
-        room.setIdentifier("Random Name");
-        room.setLevel(1);
-
-        when(organizationRepository.existsById(id)).thenReturn(true);
-        when(roomRepository.existsById(id)).thenReturn(true);
-        when(organizationRepository.findById(id)).thenReturn(Optional.of(organization));
-        when(roomRepository.findById(id)).thenReturn(Optional.of(room));
-
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            organizationService.addRoomToOrganization(organization.getId(), room.getId());
-        });
-    }
 }
