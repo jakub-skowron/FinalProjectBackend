@@ -1,0 +1,44 @@
+version: '3.7'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: 'backend:latest'
+    container_name: backend
+    restart: on-failure
+    depends_on:
+      - postgresql
+    ports:
+      - '8080:8080'
+    networks:
+      - app-net
+
+  postgresql:
+    image: 'postgres:latest'
+    container_name: postgresql
+    restart: on-failure
+    ports:
+      - '5430:5432'
+    networks:
+      - app-net
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+#
+#  frontend:
+#    build:
+#      context: ../frontend/.
+#      dockerfile: Dockerfile
+#    image: 'frontend:latest'
+#    container_name: frontend
+#    restart: on-failure
+#    ports:
+#      - '2000:2000'
+#    networks:
+#      - app-net
+
+networks:
+  app-net:
+    driver: bridge
