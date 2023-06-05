@@ -14,7 +14,7 @@ public class OrganizationController {
     @Autowired
     OrganizationService organizationService;
 
-    @GetMapping("")
+    @GetMapping()
     public List<Organization> getAllOrganizations() {
         return organizationService.getOrganizations();
     }
@@ -24,7 +24,7 @@ public class OrganizationController {
         return organizationService.getOrganizationById(id);
     }
 
-    @PostMapping("")
+    @PostMapping()
     public void addOneOrganization(@RequestBody Organization organization) {
         organizationService.addOrganization(organization);
     }

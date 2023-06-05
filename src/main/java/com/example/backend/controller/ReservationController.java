@@ -14,7 +14,7 @@ public class ReservationController {
     @Autowired
     ReservationService reservationService;
 
-    @GetMapping("")
+    @GetMapping()
     public List<Reservation> getAllReservations() {
         return reservationService.getReservations();
     }
@@ -24,7 +24,7 @@ public class ReservationController {
         return reservationService.getReservationById(id);
     }
 
-    @PostMapping("")
+    @PostMapping()
     public void addOneReservation(@RequestBody Reservation reservation) {
         reservationService.addReservation(reservation);
     }

@@ -16,7 +16,7 @@ public class CustomExceptionHandler {
         StringBuilder sb = new StringBuilder("Error: ");
         int i = 0;
         for (ConstraintViolation violation: e.getConstraintViolations()){
-            sb.append(violation.getMessage());
+            sb.append(violation.getPropertyPath().toString()+ " " + violation.getMessage());
             i++;
             if(e.getConstraintViolations().size() > 1 && i < e.getConstraintViolations().size()){
                 sb.append(", ");

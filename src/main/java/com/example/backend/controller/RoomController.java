@@ -14,7 +14,7 @@ public class RoomController {
     @Autowired
     RoomService roomService;
 
-    @GetMapping("")
+    @GetMapping()
     public List<Room> getAllRooms() {
         return roomService.getRooms();
     }
@@ -24,7 +24,7 @@ public class RoomController {
         return roomService.getRoomById(id);
     }
 
-    @PostMapping("")
+    @PostMapping()
     public void addOneRoom(@RequestBody Room room) {
         roomService.addRoom(room);
     }
