@@ -4,7 +4,7 @@ This repository contains backend of the application. Link to the frontend can yo
 
 ### [Final Project Frontend](https://github.com/jakub-skowron/FinalProjectFrontend)
 
-### Installation:
+## Installation:
 - Docker (version 24.0.2 or later)
 - Docker Compose (version v2.15.1 or later)
 
@@ -30,7 +30,17 @@ $ docker compose up --build
 ```
 $ docker compose down
 ```
-### Example of API response:
+## API Endpoints
+
+### Organization
+
+#### Get all organizations
+
+```http
+  GET /organizations
+```
+
+#### Example of API response:
 
 ```json
 [
@@ -63,9 +73,12 @@ $ docker compose down
     }
 ]
 ```
+To be continue...
 
-### What I want to add in future?
+
+## What I want to add in future?
 Priority:
+- Api documentation (Endpoints in Readme.md or Swagger), 
 - Integration tests,
 - Connect frontend and backend using docker-compose,
 - Equipment entity.
