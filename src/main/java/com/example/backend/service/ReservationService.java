@@ -118,7 +118,7 @@ public class ReservationService {
         Room room = roomRepository.findById(id).get();
         if (!room.isAvailability()) {
             LOGGER.debug("The room with id {} is not available", id);
-            throw new IllegalArgumentException("The room is not available");
+            throw new RoomAvailableException("The room is not available");
         }
     }
 

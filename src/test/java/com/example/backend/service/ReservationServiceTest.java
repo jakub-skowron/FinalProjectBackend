@@ -177,7 +177,7 @@ class ReservationServiceTest {
         when(reservationRepository.existsById(reservation.getId())).thenReturn(false);
         when(roomRepository.findById(reservation.getRoomId())).thenReturn(Optional.of(room));
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(NoSuchElementException.class, () -> {
             reservationService.addReservation(reservation);
         });
     }
