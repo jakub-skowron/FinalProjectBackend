@@ -62,6 +62,7 @@ class ReservationServiceTest {
         reservation.setEndReservationDateTime(endReservationDateTime);
     }
 
+    //TODO move method to EntityTest
     @Test
     void ShouldNotReturnViolations() {
         Set<ConstraintViolation<Reservation>> violations = validator.validate(reservation);
@@ -69,6 +70,7 @@ class ReservationServiceTest {
         assertEquals(0, violations.size());
     }
 
+    //TODO move method to EntityTest
     @ParameterizedTest
     @CsvSource({"A, size must be between 2 and 20", "This name is too long, size must be between 2 and 20"})
     public void ifIdentifierIsInvalidShouldReturnViolation(String identifier, String expectedErrorMessage) {

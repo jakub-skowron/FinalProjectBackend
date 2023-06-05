@@ -54,8 +54,9 @@ class RoomServiceTest {
                 .build();
     }
 
+    //TODO move method to EntityTest
     @Test
-    public void ShouldNotReturnViolations() {
+    public void shouldNotReturnViolations() {
         Set<ConstraintViolation<Room>> violations = validator.validate(room);
 
         SoftAssertions softly = new SoftAssertions();
@@ -63,9 +64,10 @@ class RoomServiceTest {
         softly.assertAll();
     }
 
+    //TODO move method to EntityTest
     @ParameterizedTest
     @CsvSource({"A, size must be between 2 and 20", "This name is too long, size must be between 2 and 20"})
-    public void ifNameIsInvalidShouldReturnViolations(String name, String expectedErrorMessage) {
+    public void shouldReturnViolationsIfNameIsInvalid(String name, String expectedErrorMessage) {
         room.setName(name);
 
         Set<ConstraintViolation<Room>> violations = validator.validate(room);
@@ -78,9 +80,10 @@ class RoomServiceTest {
         softly.assertAll();
     }
 
+    //TODO move method to EntityTest
     @ParameterizedTest
     @CsvSource({"A, size must be between 2 and 20", "This name is too long, size must be between 2 and 20"})
-    public void ifIdentifierIsInvalidShouldReturnViolations(String identifier, String expectedErrorMessage) {
+    public void shouldReturnViolationsIfIdentifierIsInvalid(String identifier, String expectedErrorMessage) {
         room.setIdentifier(identifier);
 
         Set<ConstraintViolation<Room>> violations = validator.validate(room);
@@ -123,9 +126,10 @@ class RoomServiceTest {
         });
     }
 
+    //TODO move method to EntityTest
     @ParameterizedTest
     @CsvSource({"-1, must be greater than or equal to 0", "11, must be less than or equal to 10"})
-    public void ifLevelIsInvalidShouldReturnViolations(Integer number, String expectedErrorMessage) {
+    public void shouldReturnViolationsIfLevelIsInvalid(Integer number, String expectedErrorMessage) {
         room.setLevel(number);
 
         Set<ConstraintViolation<Room>> violations = validator.validate(room);
@@ -138,8 +142,9 @@ class RoomServiceTest {
         softly.assertAll();
     }
 
+    //TODO move method to EntityTest
     @Test
-    public void ifPlacesAreNullShouldReturnViolations() {
+    public void shouldReturnViolationsIfPlacesAreNull() {
         room.setPlaces(null);
 
         Set<ConstraintViolation<Room>> violations = validator.validate(room);

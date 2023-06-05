@@ -11,6 +11,7 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.assertj.core.api.SoftAssertions;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,19 +56,19 @@ class OrganizationServiceTest {
         organization.setId(id);
         organization.setName(validName);
     }
-
+    //TODO move method to EntityTest
     @Test
-    public void ShouldNotReturnViolations() {
+    public void shouldNotReturnViolations() {
         Set<ConstraintViolation<Organization>> violations = validator.validate(organization);
 
         SoftAssertions softly = new SoftAssertions();
         softly.assertThat(0).isEqualTo(violations.size());
         softly.assertAll();
     }
-
+    //TODO move method to EntityTest
     @ParameterizedTest
     @CsvSource({"A, size must be between 2 and 20", "This name is too long, size must be between 2 and 20"})
-    public void ifNameIsInvalidShouldReturnViolations(String name, String expectedErrorMessage) {
+    public void shouldReturnViolationsIfNameIsInvalid(String name, String expectedErrorMessage) {
         organization.setName(name);
 
         Set<ConstraintViolation<Organization>> violations = validator.validate(organization);
@@ -79,9 +80,9 @@ class OrganizationServiceTest {
         softly.assertThat("name").isEqualTo(violation.getPropertyPath().toString());
         softly.assertAll();
     }
-
+    //TODO move method to EntityTest
     @Test
-    public void ifNameIsEmptyStringShouldReturnViolations() {
+    public void shouldReturnViolationsIfNameIsEmptyString() {
         organization.setName("");
 
         Set<ConstraintViolation<Organization>> violations = validator.validate(organization);
@@ -92,9 +93,9 @@ class OrganizationServiceTest {
         softly.assertThat(violations.toString()).contains("must not be blank");
         softly.assertAll();
     }
-
+    //TODO move method to EntityTest
     @Test
-    public void ifIsNoNameShouldThrowException() {
+    public void shouldThrowExceptionIfIsNoName() {
         organization.setName(null);
 
         Set<ConstraintViolation<Organization>> violations = validator.validate(organization);
@@ -125,7 +126,7 @@ class OrganizationServiceTest {
 
     @Test
     public void getOrganizationsShouldPass() {
-        when(organizationRepository.findAll()).thenReturn(new ArrayList<>());
+        when(organizationRepository.findAll()).thenReturn(Lists.emptyList());
 
         assertTrue(organizationService.getOrganizations().isEmpty());
     }
