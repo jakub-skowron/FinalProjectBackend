@@ -53,4 +53,10 @@ public class CustomExceptionHandler {
     public String handleDateInThePastException(Exception e) {
         return e.getMessage();
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(RoomAvailableException.class)
+    public String handleRoomAvailableException(Exception e) {
+        return e.getMessage();
+    }
 }
