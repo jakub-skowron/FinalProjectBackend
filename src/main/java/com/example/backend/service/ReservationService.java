@@ -81,7 +81,7 @@ public class ReservationService {
         }
     }
 
-    public void updateReservationIdentifierById(Long id, Reservation reservation) {
+    public void updateReservationById(Long id, Reservation reservation) {
         LOGGER.info("Reservation updating");
         if (!roomRepository.existsById(reservation.getRoomId())) {
             LOGGER.debug("The room with id {} not found", reservation.getRoomId());
