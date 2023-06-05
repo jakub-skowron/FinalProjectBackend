@@ -78,25 +78,29 @@ public class RoomService {
     }
 
     //Entity To DTO Conversion for a Spring REST API
-    public void updateRoomNameById(long id, Room room) {
-        LOGGER.info("Reservation updating");
+    public void updateRoomById(long id, Room room) {
+        LOGGER.info("Room updating");
         long organizationId = room.getOrganizationId();
-        if (roomRepository.existsById(id)) {
-            LOGGER.info("The room with id {} was found", id);
-            if (organizationRepository.existsById(organizationId)) {
-                LOGGER.info("The organization with id {} was found", organizationId);
-                LOGGER.info("Setting updated fields");
-                room.setOrganization(organizationService.getOrganizationById(organizationId));
-                room.setId(id);
-                roomRepository.save(room);
-                LOGGER.info("The room was updated");
-            } else {
-                LOGGER.debug("The organization with id {} not found", organizationId);
-                throw new ObjectNotFoundException("The Organization with inserted id doesn't exist!");
-            }
-        } else {
+        if (!roomRepository.existsById(id)) {
             LOGGER.debug("The room with id {} not found", id);
             throw new ObjectNotFoundException("The Room with inserted id doesn't exist");
         }
-    }
+        if (!organizationRepository.existsById(organizationId)) {
+            LOGGER.debug("The organization with id {} not found", organizationId);
+            throw new ObjectNotFoundException("The Organization with inserted id doesn't exist!");
+        }
+        if (roomRepository.existsByNameAndIdNot(room.getName(), id)){
+            LOGGER.debug("The room with inserted name already exists");
+            throw new ObjectAlreadyExistsException("The Room name already exists!");
+        }
+        if (roomRepository.existsByIdentifierAndIdNot(room.getIdentifier(), id)){
+            LOGGER.debug("The room with inserted identifier already exists");
+            throw new ObjectAlreadyExistsException("The Room identifier already exists!");
+        }
+        LOGGER.info("Setting updated fields");
+        room.setOrganization(organizationService.getOrganizationById(organizationId));
+        room.setId(id);
+        roomRepository.save(room);
+        LOGGER.info("The room was updated");
+        }
 }

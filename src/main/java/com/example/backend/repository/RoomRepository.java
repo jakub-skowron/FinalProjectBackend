@@ -9,4 +9,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     boolean existsByName(String string);
 
     boolean existsByIdentifier(String string);
+
+    boolean existsByNameAndIdNot(String string, long id);
+    boolean existsByIdentifierAndIdNot(String string, long id);
 }
