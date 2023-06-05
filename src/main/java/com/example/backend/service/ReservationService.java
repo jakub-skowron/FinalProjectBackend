@@ -63,9 +63,10 @@ public class ReservationService {
         LOGGER.info("Reservation date checking");
         checkIfDateIsValid(reservation, reservation.getRoomId());
         LOGGER.info("Reservation date checking completed");
+        checkIfRoomIsNotAlreadyBookedInThisDate(reservation, reservation.getRoomId());
         reservation.setRoom(roomService.getRoomById(roomId));
         reservationRepository.save(reservation);
-        LOGGER.info("The reservation was saved");
+        LOGGER.info("The reservation was created");
     }
 
     public void removeReservationById(Long id) {
@@ -80,18 +81,37 @@ public class ReservationService {
         }
     }
 
-    public void updateReservationNameById(Long id, Reservation reservation) {
+    public void updateReservationIdentifierById(Long id, Reservation reservation) {
         LOGGER.info("Reservation updating");
-        if (reservationRepository.existsById(id)) {
-            LOGGER.info("The reservation with id {} was found", id);
-            LOGGER.info("Setting updated fields");
-            reservation.setId(id);
-            reservationRepository.save(reservation);
-            LOGGER.info("The reservation was updated");
-        } else {
-            LOGGER.debug("The reservation with id {} not found", id);
-            throw new ObjectNotFoundException("The Reservation with inserted id doesn't exist");
+        if (!roomRepository.existsById(reservation.getRoomId())) {
+            LOGGER.debug("The room with id {} not found", reservation.getRoomId());
+            throw new ObjectNotFoundException("There is no room with inserted id");
         }
+        if (reservationRepository.existsById(reservation.getId())) {
+            if (reservationRepository.findById(reservation.getId()).get().getId() != reservation.getId()) {
+                LOGGER.debug("The reservation with id {} already exists", reservation.getId());
+                throw new ObjectAlreadyExistsException("The reservation with inserted id already exists");
+            }
+        }
+        if (reservationRepository.existsByIdentifier(reservation.getIdentifier())) {
+            if (!(reservationRepository.findById(reservation.getId()).get().getIdentifier()).equals(reservation.getIdentifier())) {
+                LOGGER.debug("The reservation with identifier {} already exists", reservation.getIdentifier());
+                throw new ObjectAlreadyExistsException("The reservation with inserted identifier already exists");
+            }
+        }
+        LOGGER.info("The reservation with id {} was found", id);
+        LOGGER.info("Room availability checking");
+        checkIfRoomIsAvailable(reservation.getRoomId());
+        LOGGER.info("Room availability checking completed");
+        LOGGER.info("Reservation date checking");
+        checkIfDateIsValid(reservation, reservation.getRoomId());
+        LOGGER.info("Reservation date checking completed");
+        checkIfRoomIsNotAlreadyBookedInThisDateAndWithExcludingThisReservation(reservation, id, reservation.getRoomId());
+        LOGGER.info("Setting updated fields");
+        reservation.setRoom(roomService.getRoomById(reservation.getRoomId()));
+        reservation.setId(id);
+        reservationRepository.save(reservation);
+        LOGGER.info("The reservation was updated");
     }
 
     private void checkIfRoomIsAvailable(long id) {
@@ -116,17 +136,28 @@ public class ReservationService {
             LOGGER.debug("The reservation dates are set to a past");
             throw new DateInThePastException("The selected date is invalid! It cannot be set to a past date");
         }
-        checkIfRoomIsNotAlreadyBookedInThisDate(reservation, id);
     }
 
     public void checkIfRoomIsNotAlreadyBookedInThisDate(Reservation reservation, long id) {
         boolean condition = reservationRepository
-                .findByRoom_IdAndStartReservationDateTimeLessThanEqualAndEndReservationDateTimeGreaterThanEqual(
-                id,
-                reservation.getEndReservationDateTime(),
-                reservation.getStartReservationDateTime()).isPresent();
-        LOGGER.info(""+condition);
-        if (condition) {
+                .findAllByRoom_IdAndStartReservationDateTimeLessThanEqualAndEndReservationDateTimeGreaterThanEqual(
+                        id,
+                        reservation.getEndReservationDateTime(),
+                        reservation.getStartReservationDateTime()).isEmpty();
+        if (!condition) {
+            LOGGER.debug("The room is already booked in this date");
+            throw new DateInThePastException("The room is already booked in this date");
+        }
+    }
+
+    public void checkIfRoomIsNotAlreadyBookedInThisDateAndWithExcludingThisReservation(Reservation reservation, long id, long roomId) {
+        boolean condition = reservationRepository
+                .findAllByIdNotAndRoom_IdAndStartReservationDateTimeLessThanEqualAndEndReservationDateTimeGreaterThanEqual(
+                        id,
+                        roomId,
+                        reservation.getEndReservationDateTime(),
+                        reservation.getStartReservationDateTime()).isEmpty();
+        if (!condition) {
             LOGGER.debug("The room is already booked in this date");
             throw new DateInThePastException("The room is already booked in this date");
         }

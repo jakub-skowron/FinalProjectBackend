@@ -119,10 +119,10 @@ class ReservationServiceTest {
         when(reservationRepository.existsById(reservation.getId())).thenReturn(false);
         when(reservationRepository.existsByIdentifier(reservation.getIdentifier())).thenReturn(false);
         when(roomRepository.findById(reservation.getRoomId())).thenReturn(Optional.of(room));
-        when(reservationRepository.findByRoom_IdAndStartReservationDateTimeLessThanEqualAndEndReservationDateTimeGreaterThanEqual(
+        when(reservationRepository.findAllByRoom_IdAndStartReservationDateTimeLessThanEqualAndEndReservationDateTimeGreaterThanEqual(
                 reservation.getRoomId(),
                 reservation.getEndReservationDateTime(),
-                reservation.getStartReservationDateTime())).thenReturn(Optional.empty());
+                reservation.getStartReservationDateTime())).thenReturn(new ArrayList<>());
 
         reservationService.addReservation(reservation);
 
@@ -218,7 +218,34 @@ class ReservationServiceTest {
     }
 
     @Test
-    void removeReservationById() {
+    void updateReservationByIdShouldPass(){
+        Map<Room.PlaceType, Integer> places = new HashMap<>();
+        places.put(Room.PlaceType.SITTING, 3);
+        places.put(Room.PlaceType.STANDING, 4);
+        Room room = new Room.Builder()
+                .withId(1)
+                .withName("Valid Name")
+                .withIdentifier("Valid Identifier")
+                .withLevel(1)
+                .withAvailability(true)
+                .withPlaces(places)
+                .build();
+
+        when(roomRepository.existsById(reservation.getRoomId())).thenReturn(true);
+        when(reservationRepository.existsById(reservation.getId())).thenReturn(false);
+        when(reservationRepository.existsByIdentifier(reservation.getIdentifier())).thenReturn(false);
+        when(roomRepository.findById(reservation.getRoomId())).thenReturn(Optional.of(room));
+        when(reservationRepository.findAllByRoom_IdAndStartReservationDateTimeLessThanEqualAndEndReservationDateTimeGreaterThanEqual(
+                reservation.getRoomId(),
+                reservation.getEndReservationDateTime(),
+                reservation.getStartReservationDateTime())).thenReturn(new ArrayList<>());
+
+        reservationService.addReservation(reservation);
+
+        verify(reservationRepository).save(reservation);
+    }
+    @Test
+    void removeReservationByIdShouldPass() {
         when(reservationRepository.existsById(reservation.getId())).thenReturn(true);
         when(reservationRepository.findById(reservation.getId())).thenReturn(Optional.of(reservation));
 
@@ -227,11 +254,11 @@ class ReservationServiceTest {
     }
 
     @Test
-    void checkIfRoomIsNotAlreadyBookedInThisDate() {
-        when(reservationRepository.findByRoom_IdAndStartReservationDateTimeLessThanEqualAndEndReservationDateTimeGreaterThanEqual(
+    void checkIfRoomIsNotAlreadyBookedInThisDateShouldThrowException() {
+        when(reservationRepository.findAllByRoom_IdAndStartReservationDateTimeLessThanEqualAndEndReservationDateTimeGreaterThanEqual(
                 reservation.getRoomId(),
                 reservation.getEndReservationDateTime(),
-                reservation.getStartReservationDateTime())).thenReturn(Optional.of(reservation));
+                reservation.getStartReservationDateTime())).thenReturn(List.of(reservation));
 
         Assertions.assertThrows(ObjectNotFoundException.class, () -> {
             reservationService.addReservation(reservation);

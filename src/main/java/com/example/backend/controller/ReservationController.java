@@ -36,6 +36,6 @@ public class ReservationController {
 
     @PutMapping("/{id}")
     public void updateOneReservation(@PathVariable Long id, @RequestBody Reservation reservation) {
-        reservationService.updateReservationNameById(id, reservation);
+        reservationService.updateReservationIdentifierById(id, reservation);
     }
 }

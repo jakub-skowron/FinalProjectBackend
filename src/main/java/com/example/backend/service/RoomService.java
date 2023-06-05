@@ -62,7 +62,7 @@ public class RoomService {
         LOGGER.info("Room setting");
         room.setOrganization(organizationService.getOrganizationById(organizationId));
         roomRepository.save(room);
-        LOGGER.info("The room was saved");
+        LOGGER.info("The room was created");
     }
 
     public void removeRoomById(Long id) {
