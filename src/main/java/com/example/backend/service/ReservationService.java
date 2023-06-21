@@ -33,13 +33,12 @@ public class ReservationService {
 
     public Reservation getReservationById(long id) {
         LOGGER.info("Searching for reservation with id {}", id);
-        if (reservationRepository.existsById(id)) {
-            LOGGER.info("The reservation with id {} was found", id);
-            return reservationRepository.findById(id).get();
-        } else {
+        if (!reservationRepository.existsById(id)) {
             LOGGER.debug("The reservation with id {} not found", id);
             throw new ObjectNotFoundException("The Reservation with inserted id doesn't exist");
         }
+        LOGGER.info("The reservation with id {} was found", id);
+        return reservationRepository.findById(id).get();
     }
 
     public void addReservation(Reservation reservation) {
